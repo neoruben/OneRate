@@ -1,47 +1,71 @@
 # ⭐ OneRate
 
-**Rate once, everywhere.** Puntúa una película **una sola vez** y la nota se guarda a la vez en **FilmAffinity**, **IMDb** y **Letterboxd**.
+**Rate once, everywhere.** Rate a movie **once** and your rating is saved on **FilmAffinity**, **IMDb** and **Letterboxd** at the same time.
 
-App para Android, gratuita y de código abierto.
+Free and open-source Android app.
 
-> **App no oficial.** No está afiliada, patrocinada ni respaldada por FilmAffinity, IMDb ni Letterboxd. Los nombres de esos servicios son marcas de sus respectivos propietarios y se usan solo para indicar compatibilidad.
+> **Unofficial app.** Not affiliated with, sponsored or endorsed by FilmAffinity, IMDb or Letterboxd. Those service names are trademarks of their respective owners and are used only to indicate compatibility.
 
-## Qué hace
+*[Versión en español más abajo](#-en-español)*
 
-- Buscador de películas y series con carátula, año y reparto (resultados mientras escribes).
-- Encuentra la misma película en FilmAffinity (por título y año) y en Letterboxd (por su código de IMDb). Si hay dudas, te deja elegir.
-- Eliges tu nota del 1 al 10 y la vota en las tres webs. En Letterboxd se convierte a estrellas (7 → ★★★½).
-- Menú lateral con el estado de tu sesión en cada web.
+## Features
 
-## Instalación
+- Search movies and series as you type, with poster, year and cast.
+- Finds the same movie on FilmAffinity (by title and year) and on Letterboxd (by its IMDb ID). If it isn't sure, it lets you pick.
+- Pick your rating from 1 to 10 and it's sent to every site you're signed in to. On Letterboxd it's converted to stars (7 → ★★★½).
+- Only the sites where you're signed in are shown and rated.
+- Side menu showing your sign-in status on each site. After signing in, the app takes you back to the search automatically.
+- English and Spanish (follows your phone's language).
 
-1. Descarga el último `OneRate-x.y.z.apk` desde **[Releases](../../releases)**.
-2. Ábrelo en el móvil. Android te pedirá permitir la instalación desde esa app (navegador o gestor de archivos): acéptalo.
-3. Abre OneRate, toca **☰** e inicia sesión en FilmAffinity, IMDb y/o Letterboxd. Solo hace falta una vez.
+## Installation
 
-Requiere Android 8.0 o superior (64 bits, ARM).
+1. Download the latest `OneRate-x.y.z.apk` from **[Releases](../../releases)**.
+2. Open it on your phone. Android will ask you to allow installing from that app (browser or file manager): accept.
+3. Open OneRate, tap **☰** and sign in to FilmAffinity, IMDb and/or Letterboxd. You only need to do this once.
 
-## Privacidad
+Requires Android 8.0 or newer (64-bit ARM).
 
-- La app **no recoge ni envía datos** a ningún servidor propio. No hay anuncios ni analíticas.
-- Tus sesiones (cookies) se guardan solo en tu móvil, dentro de la app.
-- Los votos se envían directamente desde tu móvil a cada web, con tu propia cuenta.
+## Privacy
 
-## Aviso
+- The app **doesn't collect or send any data** to any server of its own. No ads, no analytics.
+- Your sessions (cookies) are stored only on your phone, inside the app.
+- Ratings are sent directly from your phone to each site, with your own account.
 
-La app automatiza en tu nombre acciones que harías a mano en cada web. Las condiciones de uso de esos servicios pueden no permitirlo: **úsala bajo tu responsabilidad**. Si alguna web cambia su diseño, la app puede dejar de votar en ella hasta que se actualice.
+## Disclaimer
 
-## Cómo funciona por dentro
+The app automates, on your behalf, actions you would otherwise do by hand on each site. Those services' terms of use may not allow this: **use it at your own risk**. If a site changes its design, the app may stop rating on it until it's updated.
 
-- Navegador [GeckoView](https://mozilla.github.io/geckoview/) (el motor de Firefox) con una extensión integrada (`app/src/main/assets/votodoble/`).
-- La extensión abre la ficha de la película en segundo plano en cada web y pone la nota igual que lo harías tú.
+## How it works
 
-Para compilarla: abre el proyecto en Android Studio y pulsa **Run**.
+- [GeckoView](https://mozilla.github.io/geckoview/) browser engine (Firefox's engine) with a built-in extension (`app/src/main/assets/votodoble/`).
+- The extension opens the movie page on each site in the background and sets the rating just like you would.
 
-## Apoya el proyecto
+To build it: open the project in Android Studio and press **Run**.
 
-Si te resulta útil, puedes invitarme a un café: ☕ [ko-fi.com/onerate](https://ko-fi.com/onerate)
+## Support the project
 
-## Licencia
+If you find it useful, you can buy me a coffee: ☕ [ko-fi.com/onerate](https://ko-fi.com/onerate)
+
+## License
 
 [MIT](LICENSE)
+
+---
+
+## 🇪🇸 En español
+
+**OneRate** te permite puntuar una película **una sola vez** y que la nota se guarde a la vez en **FilmAffinity**, **IMDb** y **Letterboxd**. Es una app para Android, gratuita y de código abierto.
+
+> **App no oficial.** No está afiliada, patrocinada ni respaldada por FilmAffinity, IMDb ni Letterboxd.
+
+**Instalación**
+
+1. Descarga el último `OneRate-x.y.z.apk` desde **[Releases](../../releases)**.
+2. Ábrelo en el móvil y acepta instalar desde esa app (navegador o gestor de archivos).
+3. Abre OneRate, toca **☰** e inicia sesión en las webs que uses. Solo hace falta una vez.
+
+Requiere Android 8.0 o superior (64 bits, ARM). La app está en español si tu móvil está en español.
+
+**Privacidad:** la app no recoge ni envía datos a ningún servidor propio; tus sesiones se quedan en tu móvil y los votos van directamente a cada web con tu cuenta.
+
+**Aviso:** la app automatiza acciones que harías a mano en cada web, y sus condiciones de uso pueden no permitirlo. Úsala bajo tu responsabilidad.
