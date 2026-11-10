@@ -2,6 +2,14 @@
 
 **Rate once, everywhere.** Rate a movie **once** and your rating is saved on **FilmAffinity**, **IMDb** and **Letterboxd** at the same time.
 
+<p align="center">
+  <a href="https://github.com/neoruben/OneRate/releases/latest"><img src="https://img.shields.io/badge/⬇_Download_the_app-APK_for_Android-2f6db5?style=for-the-badge" alt="Download the app (APK for Android)" height="44"></a>
+  &nbsp;
+  <a href="https://ko-fi.com/onerate"><img src="https://img.shields.io/badge/☕_Buy_me_a_coffee-Ko--fi-f5c518?style=for-the-badge&labelColor=0e1726" alt="Buy me a coffee on Ko-fi" height="44"></a>
+</p>
+
+<p align="center"><b>👉 <a href="https://github.com/neoruben/OneRate/releases/latest">Download OneRate</a></b> — open the page, tap the <code>OneRate-x.y.z.apk</code> file under <i>Assets</i> and install it on your phone.</p>
+
 Free and open-source Android app.
 
 > **Unofficial app.** Not affiliated with, sponsored or endorsed by FilmAffinity, IMDb or Letterboxd. Those service names are trademarks of their respective owners and are used only to indicate compatibility.
@@ -28,7 +36,7 @@ Free and open-source Android app.
 
 ## Installation
 
-1. Download the latest `OneRate-x.y.z.apk` from **[Releases](../../releases)**.
+1. Download the latest `OneRate-x.y.z.apk` from **[the download page](https://github.com/neoruben/OneRate/releases/latest)** (under *Assets*).
 2. Open it on your phone. Android will ask you to allow installing from that app (browser or file manager): accept.
 3. Open OneRate, tap **☰** and sign in to FilmAffinity, IMDb and/or Letterboxd. You only need to do this once.
 
@@ -51,10 +59,6 @@ The app automates, on your behalf, actions you would otherwise do by hand on eac
 
 To build it: open the project in Android Studio and press **Run**.
 
-## Support the project
-
-If you find it useful, you can buy me a coffee: ☕ [ko-fi.com/onerate](https://ko-fi.com/onerate)
-
 ## License
 
 [MIT](LICENSE)
@@ -63,13 +67,15 @@ If you find it useful, you can buy me a coffee: ☕ [ko-fi.com/onerate](https://
 
 ## 🇪🇸 En español
 
+**👉 [Descargar OneRate](https://github.com/neoruben/OneRate/releases/latest)** · ☕ [Invítame a un café](https://ko-fi.com/onerate)
+
 **OneRate** te permite puntuar una película **una sola vez** y que la nota se guarde a la vez en **FilmAffinity**, **IMDb** y **Letterboxd**. Es una app para Android, gratuita y de código abierto.
 
 > **App no oficial.** No está afiliada, patrocinada ni respaldada por FilmAffinity, IMDb ni Letterboxd.
 
 **Instalación**
 
-1. Descarga el último `OneRate-x.y.z.apk` desde **[Releases](../../releases)**.
+1. Descarga el último `OneRate-x.y.z.apk` desde **[la página de descarga](https://github.com/neoruben/OneRate/releases/latest)** (en *Assets*).
 2. Ábrelo en el móvil y acepta instalar desde esa app (navegador o gestor de archivos).
 3. Abre OneRate, toca **☰** e inicia sesión en las webs que uses. Solo hace falta una vez.
 
