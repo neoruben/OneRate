@@ -8,6 +8,15 @@ Free and open-source Android app.
 
 *[Versión en español más abajo](#-en-español)*
 
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/Screenshot_20261110-205241.png" width="200" alt="Start screen">
+  <img src="screenshots/Screenshot_20261110-205319.png" width="200" alt="Search results as you type">
+  <img src="screenshots/Screenshot_20261110-205451.png" width="200" alt="Rating a movie on three sites">
+  <img src="screenshots/Screenshot_20261110-205525.png" width="200" alt="Side menu with sign-in status">
+</p>
+
 ## Features
 
 - Search movies and series as you type, with poster, year and cast.
