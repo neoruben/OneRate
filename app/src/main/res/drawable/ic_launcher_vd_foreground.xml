@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono de OneRate: una estrella (tu nota) y tres flechas (las tres webs) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FBBF24" android:pathData="M39.71,42.00 L42.72,49.86 L51.12,50.29 L44.58,55.58 L46.76,63.71 L39.71,59.12 L32.65,63.71 L34.84,55.58 L28.29,50.29 L36.70,49.86 Z" />
+    <path android:fillColor="#60A5FA" android:pathData="M53.70,51.85 L68.69,42.21 L70.75,45.41 L74.91,35.60 L64.26,35.31 L66.31,38.51 L51.32,48.15 Z" />
+    <path android:fillColor="#FBBF24" android:pathData="M54.11,56.20 L70.91,56.20 L70.91,60.00 L79.71,54.00 L70.91,48.00 L70.91,51.80 L54.11,51.80 Z" />
+    <path android:fillColor="#34D399" android:pathData="M51.32,59.85 L66.31,69.49 L64.26,72.69 L74.91,72.40 L70.75,62.59 L68.69,65.79 L53.70,56.15 Z" />
+</vector>

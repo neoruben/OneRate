@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+  body { font: 14px/1.4 system-ui, sans-serif; margin: 0; padding: 14px 16px; min-width: 320px; color: #1c252b; }
+  @media (prefers-color-scheme: dark) { body { background: #1c252b; color: #e8eef1; } }
+  h1 { font-size: 15px; margin: 0 0 10px; }
+  label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
+  p { margin: 10px 0 0; opacity: .75; font-size: 13px; }
+  #perm { margin: 0 0 12px; padding: 10px; border-radius: 8px; font-size: 13px; }
+  #perm.ok { background: rgba(47, 191, 113, .15); }
+  #perm.no { background: rgba(229, 83, 75, .18); }
+  #perm button { margin-top: 8px; font: inherit; font-weight: 700; padding: 6px 12px; border-radius: 8px; border: 0; background: #2fbf71; color: #06210f; cursor: pointer; }
+</style>
+</head>
+<body>
+  <h1>🎬 OneRate</h1>
+  <div id="perm"></div>
+  <label><input type="checkbox" id="askFirst"> Preguntar antes de votar en la otra web</label>
+  <p>Si lo desactivas, vota directamente cuando la película coincide claramente (mismo año y título o director). Si hay dudas, siempre pregunta.</p>
+  <p>Tienes que tener la sesión iniciada en las dos webs en este navegador.</p>
+  <script src="options.js"></script>
+</body>
+</html>

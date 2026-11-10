@@ -1,0 +1,111 @@
+{
+  "manifest_version": 3,
+  "name": "OneRate",
+  "short_name": "OneRate",
+  "version": "1.8.0",
+  "description": "Vota una película una vez y se registra en FilmAffinity, IMDb y Letterboxd. App no oficial.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "onerate@onerate.app"
+    }
+  },
+  "icons": {
+    "16": "icon-16.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "96": "icon-96.png",
+    "128": "icon-128.png"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://www.filmaffinity.com/*",
+    "https://m.filmaffinity.com/*",
+    "https://www.imdb.com/*",
+    "https://m.imdb.com/*",
+    "https://v3.sg.media-imdb.com/*",
+    "https://letterboxd.com/*"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.filmaffinity.com/*/film*.html",
+        "https://m.filmaffinity.com/*/film*.html"
+      ],
+      "js": [
+        "common.js",
+        "fa.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.imdb.com/*title/tt*",
+        "https://m.imdb.com/*title/tt*"
+      ],
+      "js": [
+        "common.js",
+        "imdb.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://letterboxd.com/film/*"
+      ],
+      "js": [
+        "common.js",
+        "letterboxd.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.imdb.com/*",
+        "https://m.imdb.com/*",
+        "https://www.filmaffinity.com/*",
+        "https://m.filmaffinity.com/*",
+        "https://letterboxd.com/*"
+      ],
+      "js": [
+        "returner.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "options.html"
+  },
+  "action": {
+    "default_title": "OneRate",
+    "default_popup": "options.html",
+    "default_icon": {
+      "16": "icon-16.png",
+      "32": "icon-32.png",
+      "48": "icon-48.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "search.html"
+      ],
+      "matches": [
+        "https://www.imdb.com/*",
+        "https://m.imdb.com/*",
+        "https://www.filmaffinity.com/*",
+        "https://m.filmaffinity.com/*",
+        "https://letterboxd.com/*"
+      ]
+    }
+  ]
+}
