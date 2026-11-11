@@ -249,8 +249,52 @@ async function lbInfo(imdbId) {
   const h = await r.text();
   const title = decode((h.match(/<meta property="og:title" content="([^"]+)"/) || [])[1] || '');
   const image = (h.match(/"image":"(https:\/\/a\.ltrbxd\.com\/resized\/film-poster\/[^"]+)"/) || [])[1] || '';
-  return { found: !!title, title, image: image.replace(/-0-600-0-900-crop/, '-0-140-0-210-crop'), url: r.url };
+  return { found: !!title, title, image: image.replace(/-0-600-0-900-crop/, '-0-140-0-210-crop'), url: r.url, avg: parseLbAvg(h) };
 }
+
+// ---------------------------------------------------------------- notas medias
+// Cada función devuelve { avg, max, count } o null si no se encuentra la nota (p. ej. película sin votos)
+const toNum = s => { const n = parseFloat(String(s == null ? '' : s).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(n) ? n : null; };
+const mkAvg = (avg, max, count) => (avg != null && avg > 0 && avg <= max) ? { avg, max, count: count != null ? Math.round(count) : null } : null;
+
+// IMDb: JSON-LD de la ficha (aggregateRating) y, si no, los datos internos de la página
+function parseImdbAvg(h) {
+  let m = h.match(/"aggregateRating"\s*:\s*\{[^}]*?"ratingValue"\s*:\s*"?([\d.]+)/);
+  if (m) {
+    const c = (h.match(/"aggregateRating"\s*:\s*\{[^}]*?"ratingCount"\s*:\s*"?(\d+)/) || [])[1];
+    return mkAvg(toNum(m[1]), 10, toNum(c));
+  }
+  m = h.match(/"ratingsSummary"\s*:\s*\{\s*"aggregateRating"\s*:\s*([\d.]+)\s*,\s*"voteCount"\s*:\s*(\d+)/);
+  return m ? mkAvg(toNum(m[1]), 10, toNum(m[2])) : null;
+}
+
+// FilmAffinity: <div id="movie-rat-avg" itemprop="ratingValue" content="7.5">7,5</div>
+function parseFaAvg(h) {
+  const m = h.match(/itemprop="ratingValue"[^>]*content="([\d.,]+)"/)
+    || h.match(/content="([\d.,]+)"[^>]*itemprop="ratingValue"/)
+    || h.match(/id="movie-rat-avg"[^>]*>\s*([\d.,]+)\s*</);
+  const c = (h.match(/itemprop="ratingCount"[^>]*content="(\d+)"/) || h.match(/content="(\d+)"[^>]*itemprop="ratingCount"/) || [])[1];
+  return m ? mkAvg(toNum(m[1]), 10, toNum(c)) : null;
+}
+
+// Letterboxd (sobre 5): JSON-LD de la ficha o la etiqueta twitter:data2 («4.20 out of 5»)
+function parseLbAvg(h) {
+  let m = h.match(/"aggregateRating"\s*:\s*\{[^}]*?"ratingValue"\s*:\s*"?([\d.]+)/);
+  if (m) {
+    const c = (h.match(/"aggregateRating"\s*:\s*\{[^}]*?"ratingCount"\s*:\s*"?(\d+)/) || [])[1];
+    return mkAvg(toNum(m[1]), 5, toNum(c));
+  }
+  m = h.match(/name="twitter:data2"\s+content="([\d.]+) out of 5"/);
+  return m ? mkAvg(toNum(m[1]), 5, null) : null;
+}
+
+async function avgFromPage(url, parse, site) {
+  const r = await fetch(url, { credentials: 'include' });
+  if (!r.ok) throw new Error(`${site} respondió ${r.status}`);
+  return { avg: parse(await r.text()) };
+}
+const imdbAvg = id => avgFromPage(`https://www.imdb.com/title/${encodeURIComponent(id)}/`, parseImdbAvg, 'IMDb');
+const faAvg = id => avgFromPage(`${FA}/film${encodeURIComponent(id)}.html`, parseFaAvg, 'FilmAffinity');
 
 // ---------------------------------------------------------------- vuelta tras iniciar sesión
 // El buscador avisa de que abres una web para iniciar sesión; returner.js pregunta desde esa web
@@ -335,6 +379,8 @@ api.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     case 'startVote': return reply(startVote(msg));
     case 'lbRate': return reply(tabId ? lbRate(tabId, msg.rating) : { ok: false, msg: 'Sin pestaña' });
     case 'lbInfo': return reply(lbInfo(msg.id).catch(e => ({ error: e.message || String(e) })));
+    case 'avgImdb': return reply(imdbAvg(msg.id).catch(e => ({ error: e.message || String(e) })));
+    case 'avgFa': return reply(faAvg(msg.id).catch(e => ({ error: e.message || String(e) })));
     case 'watchLogin': loginWatch = { site: msg.site, until: Date.now() + 10 * 60 * 1000 }; return reply(true);
     case 'loginReturnCheck': return reply(loginReturnCheck(msg.site, tabId));
     case 'loginStatus': return reply(loginStatus());
@@ -350,4 +396,4 @@ api.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 // Para las pruebas con node
-if (typeof module !== 'undefined') module.exports = { parseFaSearch, findImdb, findFa };
+if (typeof module !== 'undefined') module.exports = { parseFaSearch, findImdb, findFa, parseImdbAvg, parseFaAvg, parseLbAvg };

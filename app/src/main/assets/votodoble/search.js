@@ -34,6 +34,7 @@ const TEXT = {
     notOnFa: 'Can’t find it on FilmAffinity.', notSure: 'Not sure which one it is:', pickMovie: 'Choose the movie',
     voting: 'Rating', waiting: 'Waiting', done: 'Rated', error: 'Error',
     signedIn: 'Signed in', signedOut: 'Not signed in', unknown: 'Couldn’t check',
+    votes: 'votes', noAvg: 'No average rating yet',
   },
   es: {
     menu: 'Menú', searchPh: 'Busca una película o serie', search: 'Buscar', navSearch: 'Buscar película',
@@ -52,6 +53,7 @@ const TEXT = {
     notOnFa: 'No la encuentro en FilmAffinity.', notSure: 'No estoy seguro de cuál es:', pickMovie: 'Elige la película',
     voting: 'Votando', waiting: 'Esperando', done: 'Votado', error: 'Error',
     signedIn: 'Sesión iniciada', signedOut: 'Sin iniciar sesión', unknown: 'No se pudo comprobar',
+    votes: 'votos', noAvg: 'Aún sin nota media',
   },
 }[LANG];
 const T = (k, ...a) => (typeof TEXT[k] === 'function' ? TEXT[k](...a) : TEXT[k]);
@@ -155,6 +157,23 @@ function showList() {
 const DOTS = '<span class="dots"><i></i><i></i><i></i></span>';
 const NAMES = { imdb: 'IMDb', fa: 'FilmAffinity', lb: 'Letterboxd' };
 
+// Nota media de cada web, en su propia escala (IMDb y FilmAffinity sobre 10, Letterboxd sobre 5)
+const compact = new Intl.NumberFormat(LANG, { notation: 'compact', maximumFractionDigits: 1 });
+function showAvg(site, r) {
+  const el = $(`#avg-${site}`);
+  if (!el) return;                       // ya se salió de la ficha
+  const a = r && r.avg;
+  if (!a) { el.className = 'avg none'; el.textContent = r && r.error ? '' : T('noAvg'); return; }
+  const n = a.avg.toLocaleString(LANG, { minimumFractionDigits: 1, maximumFractionDigits: 2 });
+  el.className = 'avg';
+  el.textContent = `★ ${n} / ${a.max}` + (a.count ? ` · ${compact.format(a.count)} ${T('votes')}` : '');
+}
+const loadAvg = (site, id) => {
+  const el = $(`#avg-${site}`);
+  if (el) { el.className = 'avg none'; el.innerHTML = DOTS; }
+  return send({ type: site === 'imdb' ? 'avgImdb' : 'avgFa', id }).then(r => showAvg(site, r), () => showAvg(site, null));
+};
+
 // Estado de sesión, consultado una vez y reutilizado (el menú lo refresca al abrirse)
 let loginPromise = null, loginAt = 0;
 const getLogins = (fresh = false) => {
@@ -197,9 +216,9 @@ async function showMovie(it) {
         <div class="s">${esc(it.cast || '')}</div>
       </div>
     </div>
-    ${has('imdb') ? `<div class="site imdb"><div class="lbl">IMDb</div><div class="row">${thumb(it.image)}<div class="m">${esc(it.title)} (${esc(it.year || '?')})</div></div><div class="st" id="st-imdb"></div></div>` : ''}
-    ${has('fa') ? `<div class="site fa"><div class="lbl">FilmAffinity</div><div class="m" id="fa-m">${T('findingMovie')} ${DOTS}</div><div class="st" id="st-fa"></div></div>` : ''}
-    ${has('lb') ? `<div class="site lb"><div class="lbl">Letterboxd</div><div class="m" id="lb-m">${T('findingMovie')} ${DOTS}</div><div class="m"><span class="lbstars" id="lb-stars"></span></div><div class="st" id="st-lb"></div></div>` : ''}
+    ${has('imdb') ? `<div class="site imdb"><div class="lbl">IMDb</div><div class="row">${thumb(it.image)}<div class="m">${esc(it.title)} (${esc(it.year || '?')})</div></div><div class="avg none" id="avg-imdb"></div><div class="st" id="st-imdb"></div></div>` : ''}
+    ${has('fa') ? `<div class="site fa"><div class="lbl">FilmAffinity</div><div class="m" id="fa-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-fa"></div><div class="st" id="st-fa"></div></div>` : ''}
+    ${has('lb') ? `<div class="site lb"><div class="lbl">Letterboxd</div><div class="m" id="lb-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-lb"></div><div class="m"><span class="lbstars" id="lb-stars"></span></div><div class="st" id="st-lb"></div></div>` : ''}
     <h3>${T('yourRating')}</h3>
     <div class="grid">${[...Array(10)].map((_, i) => `<button data-n="${i + 1}">${i + 1}</button>`).join('')}</div>
     <button class="primary vote" id="vote" disabled>${T('pickRating')}</button>`;
@@ -224,10 +243,14 @@ async function showMovie(it) {
     refresh();
   }));
 
+  // IMDb: nota media de la ficha (no depende de las demás webs)
+  if (has('imdb')) loadAvg('imdb', it.id);
+
   // Letterboxd: la ficha se abre directamente con el código de IMDb (sin buscar por título)
   if (has('lb')) send({ type: 'lbInfo', id: it.id }).then(lb => {
     const el = $('#lb-m');
     if (!el) return;
+    if (lb && lb.found) showAvg('lb', lb);
     if (lb && lb.found) el.innerHTML = `<div class="row">${thumb(lb.image)}<div>${esc(lb.title)}</div></div>`;
     else if (lb && lb.found === false) el.innerHTML = `<span class="err">${T('notOnLb')}</span>`;
     else el.textContent = T('sameAsImdb');
@@ -247,6 +270,7 @@ async function showMovie(it) {
       const label = c => `${c.title} (${c.year || '?'})${c.extra ? ' · ' + c.extra : ''}`;
       if (fa.confident) {
         faM.innerHTML = `<div class="row">${thumb(cands[0].image)}<div>${esc(label(cands[0]))}</div></div>`;
+        loadAvg('fa', cands[0].id);
       } else {
         // Desplegable propio (con carátulas): cerrado muestra la elegida; al tocarlo se abre la lista
         faM.innerHTML = `${T('notSure')}
@@ -260,6 +284,7 @@ async function showMovie(it) {
           faM.querySelectorAll('.choice').forEach(x => x.classList.toggle('sel', x === b));
           $('#fa-cur').innerHTML = `<span class="row">${thumb(faChoice.image)}<span>${esc(label(faChoice))}</span></span>`;
           toggle(false);
+          loadAvg('fa', faChoice.id);
           refresh();
         }));
       }
