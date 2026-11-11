@@ -34,7 +34,7 @@ const TEXT = {
     notOnFa: 'Can’t find it on FilmAffinity.', notSure: 'Not sure which one it is:', pickMovie: 'Choose the movie',
     voting: 'Rating', waiting: 'Waiting', done: 'Rated', error: 'Error',
     signedIn: 'Signed in', signedOut: 'Not signed in', unknown: 'Couldn’t check',
-    votes: 'votes', noAvg: 'No average rating yet',
+    votes: 'votes', noAvg: 'No average rating yet', github: 'Source code on GitHub', version: 'Version',
   },
   es: {
     menu: 'Menú', searchPh: 'Busca una película o serie', search: 'Buscar', navSearch: 'Buscar película',
@@ -53,7 +53,7 @@ const TEXT = {
     notOnFa: 'No la encuentro en FilmAffinity.', notSure: 'No estoy seguro de cuál es:', pickMovie: 'Elige la película',
     voting: 'Votando', waiting: 'Esperando', done: 'Votado', error: 'Error',
     signedIn: 'Sesión iniciada', signedOut: 'Sin iniciar sesión', unknown: 'No se pudo comprobar',
-    votes: 'votos', noAvg: 'Aún sin nota media',
+    votes: 'votos', noAvg: 'Aún sin nota media', github: 'Código fuente en GitHub', version: 'Versión',
   },
 }[LANG];
 const T = (k, ...a) => (typeof TEXT[k] === 'function' ? TEXT[k](...a) : TEXT[k]);
@@ -216,12 +216,16 @@ async function showMovie(it) {
         <div class="s">${esc(it.cast || '')}</div>
       </div>
     </div>
-    ${has('imdb') ? `<div class="site imdb"><div class="lbl">IMDb</div><div class="row">${thumb(it.image)}<div class="m">${esc(it.title)} (${esc(it.year || '?')})</div></div><div class="avg none" id="avg-imdb"></div><div class="st" id="st-imdb"></div></div>` : ''}
-    ${has('fa') ? `<div class="site fa"><div class="lbl">FilmAffinity</div><div class="m" id="fa-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-fa"></div><div class="st" id="st-fa"></div></div>` : ''}
-    ${has('lb') ? `<div class="site lb"><div class="lbl">Letterboxd</div><div class="m" id="lb-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-lb"></div><div class="m"><span class="lbstars" id="lb-stars"></span></div><div class="st" id="st-lb"></div></div>` : ''}
-    <h3>${T('yourRating')}</h3>
-    <div class="grid">${[...Array(10)].map((_, i) => `<button data-n="${i + 1}">${i + 1}</button>`).join('')}</div>
-    <button class="primary vote" id="vote" disabled>${T('pickRating')}</button>`;
+    ${/* Cabecera de cada web: nombre a la izquierda y estado del voto a la derecha, en la misma línea,
+         para que al votar no crezca la tarjeta ni se desplace la pantalla */ ''}
+    ${has('imdb') ? `<div class="site imdb"><div class="hd"><span class="lbl">IMDb</span><span class="st" id="st-imdb"></span></div><div class="row">${thumb(it.image)}<div class="m">${esc(it.title)} (${esc(it.year || '?')})</div></div><div class="avg none" id="avg-imdb"></div></div>` : ''}
+    ${has('fa') ? `<div class="site fa"><div class="hd"><span class="lbl">FilmAffinity</span><span class="st" id="st-fa"></span></div><div class="m" id="fa-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-fa"></div></div>` : ''}
+    ${has('lb') ? `<div class="site lb"><div class="hd"><span class="lbl">Letterboxd</span><span class="lbstars" id="lb-stars"></span><span class="st" id="st-lb"></span></div><div class="m" id="lb-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-lb"></div></div>` : ''}
+    <div class="foot">
+      <h3>${T('yourRating')}</h3>
+      <div class="grid">${[...Array(10)].map((_, i) => `<button data-n="${i + 1}">${i + 1}</button>`).join('')}</div>
+      <button class="primary vote" id="vote" disabled>${T('pickRating')}</button>
+    </div>`;
   main.scrollTop = 0;
 
   $('#back').addEventListener('click', showList);
@@ -242,6 +246,9 @@ async function showMovie(it) {
     main.querySelectorAll('.grid button').forEach(x => x.classList.toggle('sel', x === b));
     refresh();
   }));
+
+  // Mensaje del voto cortado con «…»: al tocarlo se despliega entero (y se vuelve a plegar)
+  main.querySelectorAll('.site .st').forEach(el => el.addEventListener('click', () => el.classList.toggle('full')));
 
   // IMDb: nota media de la ficha (no depende de las demás webs)
   if (has('imdb')) loadAvg('imdb', it.id);
@@ -301,6 +308,7 @@ async function showMovie(it) {
     const show = (el, r) => {
       el.className = 'st ' + (r && r.ok ? 'ok' : 'bad');
       el.textContent = r && r.ok ? `✔ ${tmsg(r.msg) || T('done')}` : `✖ ${tmsg(r && (r.msg || r.error)) || T('error')}`;
+      el.title = el.textContent;   // si el texto se corta con «…», al tocarlo se ve entero
     };
     const urls = { imdb: it.url, fa: faChoice && faChoice.url, lb: `https://letterboxd.com/imdb/${it.id}/` };
     // Una después de otra: así solo hay una pestaña oculta a la vez
@@ -338,8 +346,21 @@ async function openAccount(site, url) {
 $('#nv-fa').addEventListener('click', () => openAccount('fa', 'https://www.filmaffinity.com/es/main.html'));
 $('#nv-imdb').addEventListener('click', () => openAccount('imdb', 'https://www.imdb.com/'));
 $('#nv-lb').addEventListener('click', () => openAccount('lb', 'https://letterboxd.com/'));
-// Ko-fi: la app lo abre fuera, en el navegador del móvil
+// Ko-fi y GitHub: la app los abre fuera, en el navegador del móvil
 $('#nv-kofi').addEventListener('click', () => { location.href = 'https://ko-fi.com/onerate'; });
+$('#nv-gh').addEventListener('click', () => { location.href = 'https://github.com/neoruben/OneRate'; });
+
+// Versión de la app: la app la pasa en la dirección (?v=1.0.1) al abrir el buscador y aquí se guarda,
+// para seguir mostrándola cuando la página se recarga sin ese dato (p. ej. al volver de iniciar sesión)
+(() => {
+  let v = new URLSearchParams(location.search).get('v');
+  try {
+    if (v) localStorage.setItem('appVersion', v);
+    else v = localStorage.getItem('appVersion');
+  } catch (e) { /* sin almacenamiento: solo se muestra si llegó en la dirección */ }
+  const el = $('#appver');
+  if (v && el) { el.textContent = `OneRate · ${T('version')} ${v}`; el.hidden = false; }
+})();
 
 
 async function checkLogins() {

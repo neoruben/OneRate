@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
         private const val EXT_URI = "resource://android/assets/votodoble/"
         private const val EXT_ID = "onerate@onerate.app"
         private const val FA_HOME = "https://www.filmaffinity.com/es/main.html"
+        private val EXTERNAL_PREFIXES = listOf("https://ko-fi.com/", "https://github.com/neoruben/OneRate")
 
         // Solo puede haber un GeckoRuntime por proceso
         private var sRuntime: GeckoRuntime? = null
@@ -45,7 +46,11 @@ class MainActivity : ComponentActivity() {
         private fun runtime(ctx: Context): GeckoRuntime = sRuntime ?: GeckoRuntime.create(
             ctx.applicationContext,
             GeckoRuntimeSettings.Builder()
-                .remoteDebuggingEnabled(true) // permite depurar desde about:debugging de Firefox de escritorio
+                // Depuración desde about:debugging de Firefox de escritorio: solo en compilaciones de depuración,
+                // en la versión publicada daría acceso a las sesiones (cookies) a cualquiera con el móvil por USB
+                .remoteDebuggingEnabled(
+                    ctx.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
+                )
                 // El idioma del móvil decide el de la app (inglés por defecto, español si el móvil está en español)
                 .locales(arrayOf(java.util.Locale.getDefault().toLanguageTag()))
                 .build()
@@ -65,13 +70,13 @@ class MainActivity : ComponentActivity() {
     // ---------- Ventanas emergentes de las webs (login con Google, Amazon, Apple...) ----------
 
     private val navigationDelegate = object : GeckoSession.NavigationDelegate {
-        // Enlaces que no son de la app (Ko-fi) se abren en el navegador del móvil
+        // Enlaces que no son de la app (Ko-fi, GitHub) se abren en el navegador del móvil
         override fun onLoadRequest(
             session: GeckoSession,
             request: GeckoSession.NavigationDelegate.LoadRequest
         ): GeckoResult<AllowOrDeny>? {
             val uri = request.uri
-            if (uri.startsWith("https://ko-fi.com/")) {
+            if (EXTERNAL_PREFIXES.any { uri.startsWith(it) }) {
                 runOnUiThread {
                     try {
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uri)))
@@ -241,7 +246,8 @@ class MainActivity : ComponentActivity() {
 
         val ready = { ext: WebExtension? ->
             if (ext != null) onExtensionReady(ext)
-            mainSession.loadUri(searchUrl ?: FA_HOME)
+            // El buscador muestra la versión de la app en el menú (?v=1.0.1)
+            mainSession.loadUri(searchUrl?.let { "$it?v=${Uri.encode(appVersion())}" } ?: FA_HOME)
         }
         val plainInstall = {
             ctl.ensureBuiltIn(EXT_URI, EXT_ID).accept({ ready(it) }, { e ->
@@ -265,6 +271,10 @@ class MainActivity : ComponentActivity() {
             plainInstall()
         })
     }
+
+    private fun appVersion(): String = try {
+        packageManager.getPackageInfo(packageName, 0).versionName ?: ""
+    } catch (e: Exception) { "" }
 
     private fun onExtensionReady(ext: WebExtension) {
         extension = ext
