@@ -1,4 +1,6 @@
-# ⭐ OneRate
+<p align="center"><img src="assets/icon.svg" width="112" alt="OneRate icon"></p>
+
+<h1 align="center">OneRate</h1>
 
 **Rate once, everywhere.** Rate a movie **once** and your rating is saved on **FilmAffinity**, **IMDb** and **Letterboxd** at the same time.
 
