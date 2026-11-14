@@ -351,7 +351,7 @@ $('#nv-fa').addEventListener('click', () => openAccount('fa', 'https://www.filma
 $('#nv-imdb').addEventListener('click', () => openAccount('imdb', 'https://www.imdb.com/'));
 $('#nv-lb').addEventListener('click', () => openAccount('lb', 'https://letterboxd.com/'));
 // Ko-fi y GitHub: la app los abre fuera, en el navegador del móvil
-$('#nv-kofi').addEventListener('click', () => { location.href = 'https://ko-fi.com/onerate'; });
+$('#nv-kofi').addEventListener('click', () => { location.href = 'https://ko-fi.com/neoruben'; });
 $('#nv-gh').addEventListener('click', () => { location.href = 'https://github.com/neoruben/OneRate'; });
 
 // Versión de la app: la app la pasa en la dirección (?v=1.0.1) al abrir el buscador y aquí se guarda,
