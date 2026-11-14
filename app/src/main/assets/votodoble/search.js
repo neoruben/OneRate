@@ -273,9 +273,13 @@ async function showMovie(it) {
       faM.innerHTML = `<span class="err">${esc(tmsg(fa.error) || T('notOnFa'))}</span>`;
     } else {
       const cands = fa.candidates.slice(0, 8);
-      faChoice = fa.confident ? cands[0] : null;
+      // Si FilmAffinity solo da una película y su año encaja (±1), se elige sola: no hace falta desplegable.
+      // Con un año distinto se sigue preguntando, para no votar una película equivocada.
+      const yearFits = c => !it.year || !c.year || Math.abs(parseInt(c.year, 10) - parseInt(it.year, 10)) <= 1;
+      const sure = fa.confident || (cands.length === 1 && yearFits(cands[0]));
+      faChoice = sure ? cands[0] : null;
       const label = c => `${c.title} (${c.year || '?'})${c.extra ? ' · ' + c.extra : ''}`;
-      if (fa.confident) {
+      if (sure) {
         faM.innerHTML = `<div class="row">${thumb(cands[0].image)}<div>${esc(label(cands[0]))}</div></div>`;
         loadAvg('fa', cands[0].id);
       } else {
