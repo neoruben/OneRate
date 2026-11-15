@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/icon.svg" width="112" alt="OneRate icon"></p>
+<p align="center"><img src="assets/icon.png" width="128" alt="OneRate icon"></p>
 
 <h1 align="center">OneRate</h1>
 
