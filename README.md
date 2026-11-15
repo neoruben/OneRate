@@ -21,10 +21,7 @@ Free and open-source Android app.
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/Screenshot_20261110-205241.png" width="200" alt="Start screen">
-  <img src="screenshots/Screenshot_20261110-205319.png" width="200" alt="Search results as you type">
-  <img src="screenshots/Screenshot_20261110-205451.png" width="200" alt="Rating a movie on three sites">
-  <img src="screenshots/Screenshot_20261110-205525.png" width="200" alt="Side menu with sign-in status">
+  <img src="screenshots/onerate-screens.png" width="860" alt="OneRate: start screen, a movie found on the three sites, rating in progress, and the side menu with sign-in status">
 </p>
 
 ## Features
