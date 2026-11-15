@@ -170,16 +170,22 @@ async function loginStatus() {
     .catch(() => null);
   // La portada móvil (m.filmaffinity.com/es/main.html) da 404, así que se usa la búsqueda, que existe en las dos versiones.
   // Sin sesión, FilmAffinity siempre muestra el enlace «Iniciar sesión» (login.php / class="sign-in").
-  let fa = null;
-  try {
-    const r = await fetch(`${FA}/search.php?stype=title&stext=matrix`, { credentials: 'include' });
-    const h = await r.text();
-    if (r.ok && /filmaffinity/i.test(h)) {
-      if (/logout/i.test(h)) fa = true;
-      else if (/login\.php|class="[^"]*\bsign-in\b/i.test(h)) fa = false;
-      else fa = true;
-    }
-  } catch (e) { /* sin conexión: desconocido */ }
+  const faCheck = async () => {
+    try {
+      const r = await fetch(`${FA}/search.php?stype=title&stext=matrix`, { credentials: 'include' });
+      const h = await r.text();
+      if (r.ok && /filmaffinity/i.test(h)) {
+        if (/logout/i.test(h)) return true;
+        if (/login\.php|class="[^"]*\bsign-in\b/i.test(h)) return false;
+        return true;
+      }
+    } catch (e) { /* sin conexión: desconocido */ }
+    return null;
+  };
+  // Tras un rato sin usarla, FilmAffinity responde la primera vez «sin sesión» mientras renueva la cookie
+  // de sesión con la de «recordarme»; la segunda petición ya llega con la sesión iniciada. Se repite una vez.
+  let fa = await faCheck();
+  if (fa === false) fa = await faCheck();
   // Letterboxd: primero la cookie de sesión (letterboxd.user.CURRENT); si no está, su portada,
   // que marca el <body> con la clase logged-in o logged-out
   let lb = null, lbWhy = '';
