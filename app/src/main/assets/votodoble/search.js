@@ -156,6 +156,12 @@ function showList() {
 // Puntitos animados de "cargando"
 const DOTS = '<span class="dots"><i></i><i></i><i></i></span>';
 const NAMES = { imdb: 'IMDb', fa: 'FilmAffinity', lb: 'Letterboxd' };
+// Cabecera de cada web en la ficha: su logo (hecho con CSS, sin imágenes) y una línea de su color
+const LOGO = {
+  imdb: '<span class="logo imdb">IMDb</span>',
+  fa: '<span class="logo fa">FILMAFFINITY</span>',
+  lb: '<span class="logo lb" aria-label="Letterboxd"><i></i><i></i><i></i><b>Letterboxd</b></span>',
+};
 
 // Nota media de cada web, en su propia escala (IMDb y FilmAffinity sobre 10, Letterboxd sobre 5)
 const compact = new Intl.NumberFormat(LANG, { notation: 'compact', maximumFractionDigits: 1 });
@@ -218,9 +224,9 @@ async function showMovie(it) {
     </div>
     ${/* Cabecera de cada web: nombre a la izquierda y estado del voto a la derecha, en la misma línea,
          para que al votar no crezca la tarjeta ni se desplace la pantalla */ ''}
-    ${has('imdb') ? `<div class="site imdb"><div class="hd"><span class="lbl">IMDb</span><span class="st" id="st-imdb"></span></div><div class="row">${thumb(it.image)}<div class="m">${esc(it.title)} (${esc(it.year || '?')})</div></div><div class="avg none" id="avg-imdb"></div></div>` : ''}
-    ${has('fa') ? `<div class="site fa"><div class="hd"><span class="lbl">FilmAffinity</span><span class="st" id="st-fa"></span></div><div class="m" id="fa-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-fa"></div></div>` : ''}
-    ${has('lb') ? `<div class="site lb"><div class="hd"><span class="lbl">Letterboxd</span><span class="lbstars" id="lb-stars"></span><span class="st" id="st-lb"></span></div><div class="m" id="lb-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-lb"></div></div>` : ''}
+    ${has('imdb') ? `<div class="site imdb"><div class="hd">${LOGO.imdb}<i class="ln"></i><span class="st" id="st-imdb"></span></div><div class="row">${thumb(it.image)}<div class="m">${esc(it.title)} (${esc(it.year || '?')})</div></div><div class="avg none" id="avg-imdb"></div></div>` : ''}
+    ${has('fa') ? `<div class="site fa"><div class="hd">${LOGO.fa}<i class="ln"></i><span class="st" id="st-fa"></span></div><div class="m" id="fa-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-fa"></div></div>` : ''}
+    ${has('lb') ? `<div class="site lb"><div class="hd">${LOGO.lb}<span class="lbstars" id="lb-stars"></span><i class="ln"></i><span class="st" id="st-lb"></span></div><div class="m" id="lb-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-lb"></div></div>` : ''}
     <div class="foot">
       <h3>${T('yourRating')}</h3>
       <div class="grid">${[...Array(10)].map((_, i) => `<button data-n="${i + 1}">${i + 1}</button>`).join('')}</div>

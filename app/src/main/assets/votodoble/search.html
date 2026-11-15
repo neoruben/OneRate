@@ -112,7 +112,18 @@
     text-align: left; background: var(--bg); color: var(--text); padding: 10px; border: 2px solid var(--line); font-size: 14px; }
   .choice.sel { border-color: var(--fa); background: #1b3152; }
   .site select { width: 100%; margin-top: 6px; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
-  .site .hd { display: flex; align-items: baseline; gap: 8px; min-height: 18px; }
+  .site .hd { display: flex; align-items: center; gap: 8px; min-height: 18px; }
+  /* Logo de cada web (solo CSS) y línea de su color hasta el estado del voto */
+  .site.imdb { --svc: #f5c518; } .site.fa { --svc: #4a90e2; } .site.lb { --svc: #00e054; }
+  .site .ln { flex: 1; min-width: 12px; height: 2px; border-radius: 2px; background: var(--svc); opacity: .8; }
+  .logo { flex: none; display: inline-flex; align-items: center; height: 18px; border-radius: 4px; line-height: 1; }
+  .logo.imdb { background: #f5c518; color: #000; padding: 0 5px; font: 400 13px Impact, 'Arial Black', sans-serif; letter-spacing: .2px; }
+  .logo.fa { background: #2f6db5; color: #fff; padding: 0 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; }
+  .logo.lb { color: var(--text); font-size: 13px; font-weight: 800; }
+  .logo.lb i { width: 10px; height: 10px; border-radius: 50%; }
+  .logo.lb i + i { margin-left: -3px; }
+  .logo.lb i:nth-child(1) { background: #ff8000; } .logo.lb i:nth-child(2) { background: #00e054; } .logo.lb i:nth-child(3) { background: #40bcf4; }
+  .logo.lb b { margin-left: 6px; }
   .site .hd .lbl { flex: none; }
   .site .hd .lbstars { flex: none; font-size: 14px; }
   .site .st { margin-left: auto; min-width: 0; font-size: 13px; font-weight: 600; text-align: right;
