@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://github.com/neoruben/OneRate/releases/latest"><img src="https://img.shields.io/badge/⬇_Download_the_app-APK_for_Android-2f6db5?style=for-the-badge" alt="Download the app (APK for Android)" height="44"></a>
   &nbsp;
-  <a href="https://ko-fi.com/neoruben"><img src="https://img.shields.io/badge/☕_Buy_me_a_coffee-Ko--fi-f5c518?style=for-the-badge&labelColor=0e1726" alt="Buy me a coffee on Ko-fi" height="44"></a>
+  <a href="https://ko-fi.com/neoruben" target="_blank"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support me on Ko-fi" height="44"></a>
 </p>
 
 <p align="center"><b>👉 <a href="https://github.com/neoruben/OneRate/releases/latest">Download OneRate</a></b> — open the page, tap the <code>OneRate-x.y.z.apk</code> file under <i>Assets</i> and install it on your phone.</p>
