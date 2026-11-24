@@ -30,6 +30,7 @@ Free and open-source Android app.
 - Finds the same movie on FilmAffinity (by title and year) and on Letterboxd (by its IMDb ID). If it isn't sure, it lets you pick.
 - Pick your rating from 1 to 10 and it's sent to every site you're signed in to. On Letterboxd it's converted to stars (7 → ★★★½).
 - Only the sites where you're signed in are shown and rated.
+- Shows a short IMDb trivia fact in the movie card while you rate (when space allows, without scrolling).
 - Side menu showing your sign-in status on each site. After signing in, the app takes you back to the search automatically.
 - English and Spanish (follows your phone's language).
 

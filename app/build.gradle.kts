@@ -9,6 +9,7 @@ plugins {
 // Sin ese archivo, la versión release sale sin firmar.
 val signingProps: Properties? = listOf(
     rootProject.file("keystore.properties"),
+    rootProject.file("../claves/keystore.properties"),
     File(System.getProperty("user.home"), "Documents/claves/keystore.properties"),
 ).firstOrNull { it.isFile }?.let { f -> Properties().apply { f.reader(Charsets.UTF_8).use { load(it) } } }
 
@@ -42,6 +43,11 @@ android {
     }
 
     buildTypes {
+        // La versión de pruebas se instala junto a la publicada sin sustituirla
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             signingConfig = signingConfigs.findByName("release")
             // Sin optimización (R8): con GeckoView eliminaba código necesario y la app se cerraba al abrirla

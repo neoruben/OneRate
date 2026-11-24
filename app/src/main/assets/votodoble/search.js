@@ -35,6 +35,7 @@ const TEXT = {
     voting: 'Rating', waiting: 'Waiting', done: 'Rated', error: 'Error',
     signedIn: 'Signed in', signedOut: 'Not signed in', unknown: 'Couldn’t check',
     votes: 'votes', noAvg: 'No average rating yet', github: 'Source code on GitHub', version: 'Version',
+    trivia: 'Did you know?', triviaNext: 'Tap for another',
   },
   es: {
     menu: 'Menú', searchPh: 'Busca una película o serie', search: 'Buscar', navSearch: 'Buscar película',
@@ -54,6 +55,7 @@ const TEXT = {
     voting: 'Votando', waiting: 'Esperando', done: 'Votado', error: 'Error',
     signedIn: 'Sesión iniciada', signedOut: 'Sin iniciar sesión', unknown: 'No se pudo comprobar',
     votes: 'votos', noAvg: 'Aún sin nota media', github: 'Código fuente en GitHub', version: 'Versión',
+    trivia: '¿Sabías que…?', triviaNext: 'Toca para otra',
   },
 }[LANG];
 const T = (k, ...a) => (typeof TEXT[k] === 'function' ? TEXT[k](...a) : TEXT[k]);
@@ -227,6 +229,7 @@ async function showMovie(it) {
     ${has('imdb') ? `<div class="site imdb"><div class="hd">${LOGO.imdb}<i class="ln"></i><span class="st" id="st-imdb"></span></div><div class="row">${thumb(it.image)}<div class="m">${esc(it.title)} (${esc(it.year || '?')})</div></div><div class="avg none" id="avg-imdb"></div></div>` : ''}
     ${has('fa') ? `<div class="site fa"><div class="hd">${LOGO.fa}<i class="ln"></i><span class="st" id="st-fa"></span></div><div class="m" id="fa-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-fa"></div></div>` : ''}
     ${has('lb') ? `<div class="site lb"><div class="hd">${LOGO.lb}<span class="lbstars" id="lb-stars"></span><i class="ln"></i><span class="st" id="st-lb"></span></div><div class="m" id="lb-m">${T('findingMovie')} ${DOTS}</div><div class="avg none" id="avg-lb"></div></div>` : ''}
+    <div class="trivia-wrap" id="trivia" hidden></div>
     <div class="foot">
       <h3>${T('yourRating')}</h3>
       <div class="grid">${[...Array(10)].map((_, i) => `<button data-n="${i + 1}">${i + 1}</button>`).join('')}</div>
@@ -258,6 +261,30 @@ async function showMovie(it) {
 
   // IMDb: nota media de la ficha (no depende de las demás webs)
   if (has('imdb')) loadAvg('imdb', it.id);
+
+  // Curiosidad corta de IMDb para aprovechar el hueco libre mientras se vota (sin provocar scroll)
+  send({ type: 'triviaImdb', id: it.id, lang: LANG }).then(res => {
+    const wrap = $('#trivia');
+    const items = res && res.items;
+    if (!wrap || !items || !items.length) return;
+    let idx = Math.floor(Math.random() * items.length);
+    const renderTrivia = () => {
+      wrap.hidden = false;
+      wrap.innerHTML = `<div class="trivia-card" role="button" tabindex="0">
+        <div class="trivia-hd"><span>💡 ${T('trivia')}</span>${items.length > 1 ? `<span class="t-next">${T('triviaNext')} ↻</span>` : ''}</div>
+        <p class="trivia-txt">${esc(items[idx])}</p>
+      </div>`;
+      const card = wrap.firstElementChild;
+      const txt = card.querySelector('.trivia-txt');
+      for (const cls of ['c4', 'c3', 'c2']) {
+        if (card.offsetHeight <= wrap.clientHeight) break;
+        txt.className = `trivia-txt ${cls}`;
+      }
+      if (card.offsetHeight > wrap.clientHeight) wrap.hidden = true;
+      else if (items.length > 1) card.addEventListener('click', () => { idx = (idx + 1) % items.length; renderTrivia(); });
+    };
+    renderTrivia();
+  }, () => {});
 
   // Letterboxd: la ficha se abre directamente con el código de IMDb (sin buscar por título)
   if (has('lb')) send({ type: 'lbInfo', id: it.id }).then(lb => {

@@ -76,10 +76,22 @@
   main.dv .thumb { width: 24px; height: 36px; }
   main.dv .dd { padding: 6px 10px; margin-top: 4px; }
   main.dv h3 { margin: 6px 0 4px; }
-  main.dv .grid { gap: 6px; }
-  main.dv .grid button { padding: 7px 0; font-size: 17px; }
+  main.dv .grid { grid-template-columns: repeat(10, 1fr); gap: 4px; }
+  main.dv .grid button { padding: 9px 0; font-size: 15px; border-radius: 8px; }
   main.dv .vote { margin-top: 8px; }
   main.dv .foot h3 { margin-top: 0; padding-top: 4px; }
+  .trivia-wrap { flex: 1 1 0; min-height: 0; overflow: hidden; display: flex; align-items: center; padding: 4px 0; }
+  .trivia-card { width: 100%; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 8px 10px; cursor: pointer; }
+  .trivia-card:active { filter: brightness(1.08); }
+  .trivia-hd { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
+  .trivia-hd .t-next { color: var(--dim); font-weight: 500; text-transform: none; letter-spacing: 0; }
+  .trivia-txt { font-size: 13px; line-height: 1.35; color: var(--text); margin: 0;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; }
+  .trivia-txt.c4 { -webkit-line-clamp: 4; }
+  .trivia-txt.c3 { -webkit-line-clamp: 3; }
+  .trivia-txt.c2 { -webkit-line-clamp: 2; }
   #fa-list { position: absolute; left: 0; right: 0; top: 100%; margin-top: 4px; padding: 6px;
     background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
   .msg { color: var(--dim); text-align: center; padding: 28px 8px; }

@@ -302,6 +302,68 @@ async function avgFromPage(url, parse, site) {
 const imdbAvg = id => avgFromPage(`https://www.imdb.com/title/${encodeURIComponent(id)}/`, parseImdbAvg, 'IMDb');
 const faAvg = id => avgFromPage(`${FA}/film${encodeURIComponent(id)}.html`, parseFaAvg, 'FilmAffinity');
 
+// ---------------------------------------------------------------- curiosidades (IMDb trivia)
+const stripHtml = s => decode(String(s || '').replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, ' '))
+  .replace(/\s+/g, ' ').trim();
+
+// Distingue frases en español de las que IMDb deja sin traducir en inglés dentro de /es-es/
+const ES_RE = /\b(el|la|los|las|un|una|unos|unas|de|del|en|con|por|para|que|se|su|sus|al|como|pero|fue|era|son|está|este|esta|esto|película|escena|rodaje|papel|durante)\b/gi;
+const EN_RE = /\b(the|and|was|were|his|her|their|with|from|that|this|which|movie|film|scene|during|about|into|also|when|after|before)\b/gi;
+function isSpanish(t) {
+  if (/[áéíóúüñ¿¡]/i.test(t)) return true;
+  const es = (t.match(ES_RE) || []).length;
+  const en = (t.match(EN_RE) || []).length;
+  return es > en && es >= 2;
+}
+
+function parseImdbTrivia(html, lang = 'en') {
+  const raw = [];
+  const next = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+  if (next) {
+    try {
+      const data = JSON.parse(next[1]);
+      const walk = node => {
+        if (!node || typeof node !== 'object') return;
+        if (node.isSpoiler === true || node.spoiler === true) return;
+        if (typeof node.plaidHtml === 'string') raw.push(stripHtml(node.plaidHtml));
+        else if (typeof node.htmlContent === 'string') raw.push(stripHtml(node.htmlContent));
+        if (Array.isArray(node)) { for (const x of node) walk(x); }
+        else { for (const k of Object.keys(node)) walk(node[k]); }
+      };
+      walk(data);
+    } catch (e) { /* fallback HTML */ }
+  }
+  if (!raw.length) {
+    for (const m of html.matchAll(/class="[^"]*\bipc-html-content-inner-div\b[^"]*"[^>]*>([\s\S]*?)<\/div>/g)) {
+      raw.push(stripHtml(m[1]));
+    }
+  }
+  const uniq = [...new Set(raw)].filter(t => t.length >= 25 && !/^(edit|see more|ver más)$/i.test(t));
+  let byLang = uniq;
+  if (lang === 'es') {
+    const esOnly = uniq.filter(isSpanish);
+    if (esOnly.length) byLang = esOnly;
+  }
+  const short = byLang.filter(t => t.length <= 240);
+  const pool = short.length ? short : byLang.filter(t => t.length <= 320);
+  const list = pool.length ? pool : [...byLang].sort((a, b) => a.length - b.length);
+  return list.slice(0, 10);
+}
+
+async function imdbTrivia(id, lang) {
+  const enc = encodeURIComponent(id);
+  const urls = lang === 'es'
+    ? [`https://www.imdb.com/es-es/title/${enc}/trivia/`, `https://www.imdb.com/title/${enc}/trivia/`]
+    : [`https://www.imdb.com/title/${enc}/trivia/`];
+  for (const url of urls) {
+    const r = await fetch(url, { credentials: 'include' }).catch(() => null);
+    if (!r || !r.ok) continue;
+    const items = parseImdbTrivia(await r.text(), lang);
+    if (items.length) return { items };
+  }
+  return { items: [] };
+}
+
 // ---------------------------------------------------------------- vuelta tras iniciar sesión
 // El buscador avisa de que abres una web para iniciar sesión; returner.js pregunta desde esa web
 let loginWatch = null;   // { site, until }
@@ -387,6 +449,7 @@ api.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     case 'lbInfo': return reply(lbInfo(msg.id).catch(e => ({ error: e.message || String(e) })));
     case 'avgImdb': return reply(imdbAvg(msg.id).catch(e => ({ error: e.message || String(e) })));
     case 'avgFa': return reply(faAvg(msg.id).catch(e => ({ error: e.message || String(e) })));
+    case 'triviaImdb': return reply(imdbTrivia(msg.id, msg.lang).catch(e => ({ error: e.message || String(e) })));
     case 'watchLogin': loginWatch = { site: msg.site, until: Date.now() + 10 * 60 * 1000 }; return reply(true);
     case 'loginReturnCheck': return reply(loginReturnCheck(msg.site, tabId));
     case 'loginStatus': return reply(loginStatus());
@@ -402,4 +465,4 @@ api.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 // Para las pruebas con node
-if (typeof module !== 'undefined') module.exports = { parseFaSearch, findImdb, findFa, parseImdbAvg, parseFaAvg, parseLbAvg };
+if (typeof module !== 'undefined') module.exports = { parseFaSearch, findImdb, findFa, parseImdbAvg, parseFaAvg, parseLbAvg, parseImdbTrivia };
