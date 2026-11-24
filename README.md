@@ -28,9 +28,10 @@ Free and open-source Android app.
 
 - Search movies and series as you type, with poster, year and cast.
 - Finds the same movie on FilmAffinity (by title and year) and on Letterboxd (by its IMDb ID). If it isn't sure, it lets you pick.
-- Pick your rating from 1 to 10 and it's sent to every site you're signed in to. On Letterboxd it's converted to stars (7 → ★★★½).
+- Shows each site's average rating and vote count right on the movie screen.
+- Pick your rating from 1 to 10 on a single-row bar and it's sent to every site you're signed in to. On Letterboxd it's converted to stars (7 → ★★★½).
 - Only the sites where you're signed in are shown and rated.
-- Shows a short IMDb trivia fact in the movie card while you rate (when space allows, without scrolling).
+- Shows a short non-spoiler IMDb trivia fact in the movie card while you rate (fills available space without scrolling; tap for another).
 - Side menu showing your sign-in status on each site. After signing in, the app takes you back to the search automatically.
 - English and Spanish (follows your phone's language).
 
@@ -52,12 +53,12 @@ Requires Android 8.0 or newer (64-bit ARM).
 
 The app automates, on your behalf, actions you would otherwise do by hand on each site. Those services' terms of use may not allow this: **use it at your own risk**. If a site changes its design, the app may stop rating on it until it's updated.
 
-## How it works
+## How it works & Development
 
-- [GeckoView](https://mozilla.github.io/geckoview/) browser engine (Firefox's engine) with a built-in extension (`app/src/main/assets/votodoble/`).
-- The extension opens the movie page on each site in the background and sets the rating just like you would.
-
-To build it: open the project in Android Studio and press **Run**.
+- [GeckoView](https://mozilla.github.io/geckoview/) browser engine (Firefox's engine) hosting a built-in Manifest V3 WebExtension (`app/src/main/assets/votodoble/`).
+- The extension queries each site and opens movie pages in hidden tabs to submit your rating just like you would.
+- **Building from source:** open the project in Android Studio and press **Run** (`debug` builds use the `.debug` suffix so they install side-by-side with the release app), or run `./gradlew assembleRelease` (signed automatically if `keystore.properties` is present).
+- See **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for full technical documentation, message protocol, signing setup, and release checklist, and **[CHANGELOG.md](CHANGELOG.md)** for the version history.
 
 ## License
 
@@ -73,6 +74,16 @@ To build it: open the project in Android Studio and press **Run**.
 
 > **App no oficial.** No está afiliada, patrocinada ni respaldada por FilmAffinity, IMDb ni Letterboxd.
 
+**Características**
+
+- Búsqueda instantánea mientras escribes, con carátula, año y reparto.
+- Empareja automáticamente la película en FilmAffinity (por título y año) y en Letterboxd (por ID de IMDb); si hay dudas, te deja elegir.
+- Muestra la nota media y el número de votos de cada web directamente en la ficha.
+- Barra de puntuación del 1 al 10 en una sola fila (en Letterboxd se convierte a medias estrellas: 7 → ★★★½).
+- Solo se muestran y votan las webs donde tienes sesión iniciada.
+- Tarjeta de curiosidades de IMDb (*¿Sabías que…?*), sin spoilers y adaptada al hueco disponible sin provocar scroll (toca para ver otra).
+- Menú lateral con el estado de sesión en cada web y vuelta automática al buscador tras iniciar sesión.
+
 **Instalación**
 
 1. Descarga el último `OneRate-x.y.z.apk` desde **[la página de descarga](https://github.com/neoruben/OneRate/releases/latest)** (en *Assets*).
@@ -84,3 +95,5 @@ Requiere Android 8.0 o superior (64 bits, ARM). La app está en español si tu m
 **Privacidad:** la app no recoge ni envía datos a ningún servidor propio; tus sesiones se quedan en tu móvil y los votos van directamente a cada web con tu cuenta.
 
 **Aviso:** la app automatiza acciones que harías a mano en cada web, y sus condiciones de uso pueden no permitirlo. Úsala bajo tu responsabilidad.
+
+**Documentación técnica e historial:** consulta [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) y [CHANGELOG.md](CHANGELOG.md).
