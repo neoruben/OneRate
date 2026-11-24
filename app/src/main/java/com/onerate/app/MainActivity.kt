@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
@@ -113,6 +114,11 @@ class MainActivity : ComponentActivity() {
             val su = searchUrl ?: return
             if (session === mainSession && success && lastStartUrl?.startsWith(su) == true) {
                 session.purgeHistory()
+                // Al volver de una web externa (otro proceso) a search.html (extensión),
+                // GeckoView puede dejar el IME/foco desincronizado: lo reenfocamos y reiniciamos el teclado.
+                if (visible === mainSession) {
+                    refocusVisible(restartIme = true)
+                }
             }
         }
     }
@@ -221,7 +227,6 @@ class MainActivity : ComponentActivity() {
         mainSession.progressDelegate = progressDelegate
         mainSession.open(runtime)
         show(mainSession)
-        runtime.webExtensionController.setTabActive(mainSession, true)
 
         // Fondo oscuro como el buscador: iconos claros en la barra de estado
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
@@ -231,6 +236,11 @@ class MainActivity : ComponentActivity() {
         })
 
         installExtension()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refocusVisible(restartIme = false)
     }
 
     /**
@@ -325,9 +335,29 @@ class MainActivity : ComponentActivity() {
 
     private fun show(s: GeckoSession) {
         if (visible === s) return
+        visible?.let { old ->
+            if (old.isOpen) {
+                old.setFocused(false)
+                runtime.webExtensionController.setTabActive(old, false)
+            }
+        }
         geckoView.releaseSession()
         geckoView.setSession(s)
         visible = s
+        s.setActive(true)
+        runtime.webExtensionController.setTabActive(s, true)
+        refocusVisible(restartIme = true)
+    }
+
+    private fun refocusVisible(restartIme: Boolean) {
+        val s = visible ?: return
+        s.setFocused(true)
+        geckoView.requestFocus()
+        if (restartIme) {
+            geckoView.post {
+                getSystemService(InputMethodManager::class.java)?.restartInput(geckoView)
+            }
+        }
     }
 
     // Atrás: cierra la pestaña de voto visible, si no retrocede en el historial y, al final, sale de la app

@@ -413,4 +413,10 @@ async function checkLogins() {
   put($('#lg-lb'), st.lb);
 }
 
-$('#q').focus();
+// Diferir ligeramente el foco inicial evita desincronizar el IME de GeckoView
+// cuando search.html se abre justo al volver de una web externa de inicio de sesión.
+addEventListener('load', () => setTimeout(() => {
+  if (!drawer.classList.contains('open') && (!document.activeElement || document.activeElement === document.body)) {
+    $('#q').focus();
+  }
+}, 150));
