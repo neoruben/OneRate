@@ -276,12 +276,14 @@ async function showMovie(it) {
       </div>`;
       const card = wrap.firstElementChild;
       const txt = card.querySelector('.trivia-txt');
-      for (const cls of ['c4', 'c3', 'c2']) {
-        if (card.offsetHeight <= wrap.clientHeight) break;
-        txt.className = `trivia-txt ${cls}`;
-      }
-      if (card.offsetHeight > wrap.clientHeight) wrap.hidden = true;
-      else if (items.length > 1) card.addEventListener('click', () => { idx = (idx + 1) % items.length; renderTrivia(); });
+      // Ajusta el máximo de líneas al hueco disponible para aprovechar todo el espacio sin provocar scroll
+      const hd = card.querySelector('.trivia-hd');
+      const lh = parseFloat(getComputedStyle(txt).lineHeight) || 18;
+      const avail = card.clientHeight - 16 - (hd ? hd.offsetHeight + 4 : 0);
+      const lines = Math.floor(avail / lh);
+      if (lines < 2) { wrap.hidden = true; return; }
+      txt.style.webkitLineClamp = String(lines);
+      if (items.length > 1) card.addEventListener('click', () => { idx = (idx + 1) % items.length; renderTrivia(); });
     };
     renderTrivia();
   }, () => {});

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "OneRate",
   "short_name": "OneRate",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "Vota una película una vez y se registra en FilmAffinity, IMDb y Letterboxd. App no oficial.",
   "browser_specific_settings": {
     "gecko": {

@@ -344,8 +344,8 @@ function parseImdbTrivia(html, lang = 'en') {
     const esOnly = uniq.filter(isSpanish);
     if (esOnly.length) byLang = esOnly;
   }
-  const short = byLang.filter(t => t.length <= 240);
-  const pool = short.length ? short : byLang.filter(t => t.length <= 320);
+  const short = byLang.filter(t => t.length <= 380);
+  const pool = short.length ? short : byLang.filter(t => t.length <= 500);
   const list = pool.length ? pool : [...byLang].sort((a, b) => a.length - b.length);
   return list.slice(0, 10);
 }
